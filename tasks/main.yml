@@ -1,0 +1,15 @@
+---
+- name: Install nginx
+  yum: name=nginx state=present
+
+- name: Add extra config files
+  copy: dest=/etc/nginx/conf.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
+  with_items: '{{nginx_conf_file_paths}}'
+
+- name: Add extra config files
+  copy: dest=/etc/nginx/conf.d/{{item.key}}.conf content={{item.value}} owner=root group=root mode=0644
+  with_dict: '{{nginx_conf_file_contents}}'
+
+- name: Add dhparam cert
+  copy: dest=/etc/nginx/dhparam.pem content='{{nginx_dhparam}}' owner=root group=root mode=0644
+  when: nginx_dhparam is defined and nginx_dhparam != ''
