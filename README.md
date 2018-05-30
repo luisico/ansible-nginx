@@ -32,6 +32,7 @@ TODO
 - Improve documentation.
 - Option to disable server on port 80.
 - Simplify ciphers.
+- Support configuration of the main nginx config file.
 
 Licence
 -------
