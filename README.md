@@ -4,6 +4,8 @@ Install and configure Nginx httpd server.
 
 Ports 80, 443 or your custom ports need to be open. This role does not handle opening the ports.
 
+Nginx can be configured by suppliying a file in `nginx_main_conf_path` or content in `ginx_main_conf_content`.
+
 Requirements
 ------------
 See `meta/main.yml`.
@@ -32,7 +34,6 @@ TODO
 - Improve documentation.
 - Option to disable server on port 80.
 - Simplify ciphers.
-- Support configuration of the main nginx config file.
 
 Licence
 -------

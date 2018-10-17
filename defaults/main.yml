@@ -1,4 +1,6 @@
 ---
+nginx_main_conf_path: ''
+nginx_main_conf_content: ''
 nginx_conf_file_paths: []
 nginx_conf_file_contents: {}
 nginx_dhparam: ''

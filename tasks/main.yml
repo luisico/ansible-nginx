@@ -2,6 +2,16 @@
 - name: Install nginx
   yum: name=nginx state=present
 
+- name: Overwrite main config from file
+  copy: dest=/etc/nginx/nginx.conf src={{nginx_main_conf_path}} owner=root group=root mode=0644
+  when: nginx_main_conf_path is defined and nginx_main_conf_path != ''
+  notify: Reload nginx
+
+- name: Overwrite main config from content
+  copy: dest=/etc/nginx/nginx.conf content={{nginx_main_conf_content}} owner=root group=root mode=0644
+  when: nginx_main_conf_content is defined and nginx_main_conf_content != ''
+  notify: Reload nginx
+
 - name: Add extra config files
   copy: dest=/etc/nginx/conf.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
   with_items: '{{nginx_conf_file_paths}}'
