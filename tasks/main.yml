@@ -12,6 +12,9 @@
   when: nginx_main_conf_content is defined and nginx_main_conf_content != ''
   notify: Reload nginx
 
+- name: Disable ipv6 listeners
+  lineinfile: path=/etc/nginx/nginx.conf regexp='listen\s+\[::\]' state=absent
+
 - name: Add extra config files from file
   copy: dest=/etc/nginx/conf.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
   with_items: '{{nginx_conf_file_paths}}'
