@@ -36,6 +36,19 @@
   with_dict: '{{nginx_default_conf_file_contents}}'
   notify: Reload nginx
 
+- name: Create directory for other files
+  file: path=/etc/nginx/files owner=root group=root mode=0755 state=directory
+
+- name: Add other files from file
+  copy: dest=/etc/nginx/files/{{item | basename}} src={{item}} owner=root group=root mode=0644
+  with_items: '{{nginx_other_file_paths}}'
+  notify: Reload nginx
+
+- name: Add other files from content
+  copy: dest=/etc/nginx/files/{{item.key}} content={{item.value}} owner=root group=root mode=0644
+  with_dict: '{{nginx_other_file_contents}}'
+  notify: Reload nginx
+
 - name: Add dhparam cert
   copy: dest=/etc/nginx/dhparam.pem content='{{nginx_dhparam}}' owner=root group=root mode=0644
   when: nginx_dhparam is defined and nginx_dhparam != ''
