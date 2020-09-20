@@ -18,22 +18,22 @@
 
 - name: Add extra config files from file
   copy: dest=/etc/nginx/conf.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  with_items: '{{nginx_conf_file_paths}}'
+  loop: '{{nginx_conf_file_paths}}'
   notify: Reload nginx
 
 - name: Add extra config files from content
   copy: dest=/etc/nginx/conf.d/{{item.key}}.conf content={{item.value}} owner=root group=root mode=0644
-  with_dict: '{{nginx_conf_file_contents}}'
+  loop: '{{nginx_conf_file_contents | dict2items}}'
   notify: Reload nginx
 
 - name: Add extra config files for the default server from file
   copy: dest=/etc/nginx/default.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  with_items: '{{nginx_default_conf_file_paths}}'
+  loop: '{{nginx_default_conf_file_paths}}'
   notify: Reload nginx
 
 - name: Add extra config files for the default server from content
   copy: dest=/etc/nginx/default.d/{{item.key}}.conf content={{item.value}} owner=root group=root mode=0644
-  with_dict: '{{nginx_default_conf_file_contents}}'
+  loop: '{{nginx_default_conf_file_contents | dict2items}}'
   notify: Reload nginx
 
 - name: Create directory for other files
@@ -41,12 +41,12 @@
 
 - name: Add other files from file
   copy: dest=/etc/nginx/files/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  with_items: '{{nginx_other_file_paths}}'
+  loop: '{{nginx_other_file_paths}}'
   notify: Reload nginx
 
 - name: Add other files from content
   copy: dest=/etc/nginx/files/{{item.key}} content={{item.value}} owner=root group=root mode=0644
-  with_dict: '{{nginx_other_file_contents}}'
+  loop: '{{nginx_other_file_contents | dict2items}}'
   notify: Reload nginx
 
 - name: Add dhparam cert
