@@ -1,58 +1,116 @@
 ---
 - name: Install nginx
-  yum: name=nginx state=present
+  yum:
+    name: nginx
+    state: present
 
 - name: Overwrite main config from file
-  copy: dest=/etc/nginx/nginx.conf src={{nginx_main_conf_path}} owner=root group=root mode=0644
-  when: nginx_main_conf_path is defined and nginx_main_conf_path != ''
+  copy:
+    dest: /etc/nginx/nginx.conf
+    src: '{{ nginx_main_conf_path }}'
+    owner: root
+    group: root
+    mode: 0644
+  when: nginx_main_conf_path is defined and nginx_main_conf_path | length > 0
   notify: Reload nginx
 
 - name: Overwrite main config from content
-  copy: dest=/etc/nginx/nginx.conf content={{nginx_main_conf_content}} owner=root group=root mode=0644
-  when: nginx_main_conf_content is defined and nginx_main_conf_content != ''
+  copy:
+    dest: /etc/nginx/nginx.conf
+    content: '{{ nginx_main_conf_content }}'
+    owner: root
+    group: root
+    mode: 0644
+  when: nginx_main_conf_content is defined and nginx_main_conf_content | length > 0
   notify: Reload nginx
 
 - name: Disable ipv6 listeners
-  lineinfile: path=/etc/nginx/nginx.conf regexp='listen\s+\[::\]' state=absent
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: 'listen\s+\[::\]'
+    state: absent
   when: not nginx_enable_ipv6
 
 - name: Add extra config files from file
-  copy: dest=/etc/nginx/conf.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  loop: '{{nginx_conf_file_paths}}'
+  copy:
+    dest: '/etc/nginx/conf.d/{{ item | basename }}'
+    src: '{{ item }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_conf_file_paths }}'
   notify: Reload nginx
 
 - name: Add extra config files from content
-  copy: dest=/etc/nginx/conf.d/{{item.key}}.conf content={{item.value}} owner=root group=root mode=0644
-  loop: '{{nginx_conf_file_contents | dict2items}}'
+  copy:
+    dest: '/etc/nginx/conf.d/{{ item.key }}.conf'
+    content: '{{ item.value }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_conf_file_contents | dict2items }}'
   notify: Reload nginx
 
 - name: Add extra config files for the default server from file
-  copy: dest=/etc/nginx/default.d/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  loop: '{{nginx_default_conf_file_paths}}'
+  copy:
+    dest: '/etc/nginx/default.d/{{ item | basename }}'
+    src: '{{ item }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_default_conf_file_paths }}'
   notify: Reload nginx
 
 - name: Add extra config files for the default server from content
-  copy: dest=/etc/nginx/default.d/{{item.key}}.conf content={{item.value}} owner=root group=root mode=0644
-  loop: '{{nginx_default_conf_file_contents | dict2items}}'
+  copy:
+    dest: '/etc/nginx/default.d/{{ item.key }}.conf'
+    content: '{{ item.value }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_default_conf_file_contents | dict2items }}'
   notify: Reload nginx
 
 - name: Create directory for other files
-  file: path=/etc/nginx/files owner=root group=root mode=0755 state=directory
+  file:
+    path: /etc/nginx/files
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
 
 - name: Add other files from file
-  copy: dest=/etc/nginx/files/{{item | basename}} src={{item}} owner=root group=root mode=0644
-  loop: '{{nginx_other_file_paths}}'
+  copy:
+    dest: '/etc/nginx/files/{{ item | basename }}'
+    src: '{{ item }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_other_file_paths }}'
   notify: Reload nginx
 
 - name: Add other files from content
-  copy: dest=/etc/nginx/files/{{item.key}} content={{item.value}} owner=root group=root mode=0644
-  loop: '{{nginx_other_file_contents | dict2items}}'
+  copy:
+    dest: '/etc/nginx/files/{{ item.key }}'
+    content: '{{ item.value }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ nginx_other_file_contents | dict2items }}'
   notify: Reload nginx
 
 - name: Add dhparam cert
-  copy: dest=/etc/nginx/dhparam.pem content='{{nginx_dhparam}}' owner=root group=root mode=0644
-  when: nginx_dhparam is defined and nginx_dhparam != ''
+  copy:
+    dest: /etc/nginx/dhparam.pem
+    content: '{{ nginx_dhparam }}'
+    owner: root
+    group: root
+    mode: 0644
+  when: nginx_dhparam is defined and nginx_dhparam | length > 0
   notify: Reload nginx
 
 - name: Enable and start service
-  service: name=nginx state=started enabled=yes
+  service:
+    name: nginx
+    state: started
+    enabled: true
